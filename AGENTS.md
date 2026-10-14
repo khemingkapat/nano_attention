@@ -53,13 +53,22 @@ You are acting as an expert Socratic CUDA Mentor and Code Reviewer for the stude
 
 ---
 
-## 3. Remote Execution Backends
+## 3. Remote Execution Backends & User Workflow
 
-- **Colab T4 (`sm_75`)**:
-  - `colab-start [gpu] [session]`
-  - `colab-submit <file.cu> [sm_75]`
-  - `colab-console`
-  - `colab-stop`
-- **Slurm RTX 4090 (`sm_89`)**:
-  - `slurm-ssh` (Host: `portal.slurm.cpe.kmutt.ac.th`, User: `66070503408@cpe.kmutt.ac.th`)
-  - `slurm-scp <src>... <dest>`
+### User's Standard Colab Workflow:
+The user explicitly prefers the interactive Colab console flow:
+1. **Start VM**: `colab-start [gpu] [session]` (e.g. `colab-start T4` or `colab-start A100`).
+2. **Push File**: `colab-push <file.cu>` uploads a self-contained test file to `/content/<filename>`.
+   *(Always package daily milestones into self-contained test files like `tests/test_day1.cu` so single-file push works without include path friction).*
+3. **Interactive Console**: `colab-console`
+4. **Manual Build & Run on VM**:
+   ```bash
+   nvcc <file>.cu -o <bin> -arch=<sm_xx> && ./<bin>
+   ```
+5. **Stop VM**: `colab-stop [session]` when done to save credits.
+
+### Architecture Flags:
+- **Colab T4**: `-arch=sm_75`
+- **Colab A100**: `-arch=sm_80`
+- **Slurm RTX 4090**: `-arch=sm_89` (Host: `portal.slurm.cpe.kmutt.ac.th`, User: `66070503408@cpe.kmutt.ac.th`)
+
