@@ -3,7 +3,8 @@
 A bare-metal, pure CUDA implementation of the **Attention Mechanism** built from scratch for CPE 393 GPU Programming midterm preparation (Oct 23, 2026).
 
 Target Architectures:
-- **NVIDIA Tesla T4** (`sm_75`, Colab)
+- **NVIDIA A100** (`sm_80`, Colab — default)
+- **NVIDIA Tesla T4** (`sm_75`, Colab — legacy)
 - **NVIDIA RTX 4090** (`sm_89`, Slurm Cluster)
 
 ---
@@ -28,9 +29,10 @@ nano_attention/
 ├── flake.nix              # Reproducible Nix dev shell (CUDA, gcc, clangd, colab/slurm shorthands)
 ├── .envrc                 # direnv configuration
 ├── .clang-format          # LLVM/Google C++ formatting
-├── Makefile               # Build configuration (supports ARCH=75 or ARCH=89)
+├── Makefile               # Build configuration (GPU=A100|T4|4090, default A100)
 ├── include/
 │   ├── common.cuh         # CHECK_CUDA, CHECK_LAST_CUDA_ERROR, GpuTimer
+│   ├── test_utils.cuh     # Host-only: DeviceBuffer, random_vector, verify, CPU refs
 │   ├── matmul.cuh         # Tiled matrix multiplication interface
 │   ├── mask.cuh           # Scale & causal masking interface
 │   ├── softmax.cuh        # Row-wise reduction softmax interface
@@ -41,7 +43,10 @@ nano_attention/
 │   ├── softmax.cu         # Softmax kernel launch stubs
 │   ├── attention.cu       # Attention forward sync & stream stubs
 │   └── main.cu            # CLI entry point
+├── scripts/
+│   └── bundle.py          # Flattens a test + deps into build/*.cu for colab-push
 ├── tests/
+│   ├── test_matmul.cu     # make test-matmul / make push-matmul
 │   └── test_attention.cu  # Verification against CPU reference
 └── benchmarks/
     └── bench_attention.cu # Latency & effective bandwidth measurement
@@ -59,7 +64,7 @@ direnv allow
 
 ### 2. Building
 ```bash
-# Compile for sm_75 (Tesla T4)
+# Compile for sm_75 (Tesla T4) — default is GPU=A100 (sm_80)
 make ARCH=75
 
 # Compile for sm_89 (RTX 4090)
@@ -76,10 +81,10 @@ make bench
 ```
 
 ### 4. Remote Execution
-- **Colab (Tesla T4)**:
+- **Colab (A100)**:
   ```bash
-  colab-start T4 cuda-dev
-  colab-submit src/main.cu sm_75
+  colab-start A100 cuda-dev
+  make push-matmul   # then build in colab-console
   ```
 - **Slurm (RTX 4090)**:
   ```bash

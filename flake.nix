@@ -93,7 +93,7 @@
 
       colab-start = pkgs.writeShellScriptBin "colab-start" ''
         export PATH="$HOME/.local/bin:$PATH"
-        GPU="''${1:-T4}"
+        GPU="''${1:-A100}"
         SESSION="''${2:-cuda-dev}"
         echo "==> Starting Colab session '$SESSION' (GPU: $GPU)..."
         colab new -s "$SESSION" --gpu "$GPU"
@@ -211,7 +211,7 @@
       colab-submit = pkgs.writeShellScriptBin "colab-submit" ''
         export PATH="$HOME/.local/bin:$PATH"
 
-        ARCH="sm_75"
+        ARCH="sm_80"
         SESSION="cuda-dev"
         TIMEOUT="3600"
         FILE=""
@@ -241,7 +241,7 @@
               if [ -z "$FILE" ]; then
                 FILE="$1"
                 shift
-              elif [ "$ARCH" = "sm_75" ] && [[ "$1" == sm_* || "$1" == compute_* ]]; then
+              elif [ "$ARCH" = "sm_80" ] && [[ "$1" == sm_* || "$1" == compute_* ]]; then
                 ARCH="$1"
                 shift
               elif [ "$SESSION" = "cuda-dev" ] && [[ "$1" =~ ^[a-zA-Z0-9_-]+$ ]] && ! [[ "$1" =~ ^[0-9]+$ ]]; then
@@ -267,7 +267,7 @@
             echo "Usage: colab-submit <file.cu> [-a arch] [-s session] [-t timeout] [-- <args...>]"
             echo "Example: colab-submit gpu_memory/matmult.cu"
             echo "Example: colab-submit matrix/matmul.cu -- 16"
-            echo "Example: colab-submit matmult.cu -a sm_75 -s cuda-dev -t 3600"
+            echo "Example: colab-submit matmult.cu -a sm_80 -s cuda-dev -t 3600"
             exit 1
           fi
         fi
@@ -350,7 +350,7 @@
           echo "Available Shorthands:"
           echo "  slurm-ssh                     - SSH login to Slurm portal (ssh -l ${slurmUser} ${slurmHost})"
           echo "  slurm-scp <src>... <dest>     - SCP to/from Slurm (e.g. slurm-scp file.cu matrix/ or slurm-scp :matrix/out.txt .)"
-          echo "  colab-start [gpu] [session]   - Start named Colab session (default: T4, cuda-dev)"
+          echo "  colab-start [gpu] [session]   - Start named Colab session (default: A100, cuda-dev)"
           echo "  colab-push <file.cu> [dest]   - Upload local .cu file to Colab (default: /content/<filename>)"
           echo "  colab-console                 - Connect to interactive bash/tmux shell on Colab VM"
           echo "  colab-submit <file.cu> [arch] - Automated: upload, compile (!nvcc) and run on Colab"

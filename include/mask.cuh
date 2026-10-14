@@ -1,16 +1,9 @@
 #pragma once
+// PUBLIC INTERFACE ONLY. Kernel lives in src/mask.cu.
 
 #include "common.cuh"
 
-// Midterm Concepts:
-// - 2D grid/thread mapping: row and col calculation
-// - Scaling by 1.0f / sqrt(d_k)
-// - Causal masking: lower triangular condition (col > row -> -1e9f)
-// - Minimizing warp divergence: evaluate warp alignment or branchless selection (fminf / ternary)
-
-__global__ void scale_and_mask_kernel(float* scores, int batch_size, int seq_len, float scale, bool causal) {
-    // TODO: Your implementation here
-}
-
-void launch_scale_and_mask(float* d_scores, int batch_size, int seq_len,
-                           float scale, bool causal = true, cudaStream_t stream = 0);
+// In-place on scores[batch_size * seq_len, seq_len]:
+//   scores *= scale; if causal, scores[i][j] = -inf-ish for j > i
+void launch_scale_and_mask(float *d_scores, int batch_size, int seq_len, float scale,
+                           bool causal = true, cudaStream_t stream = 0);

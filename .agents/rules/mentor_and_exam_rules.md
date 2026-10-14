@@ -25,12 +25,15 @@ These rules govern how AI agents collaborate with the student in the `nano_atten
 
 ## 2. Hardware Environments
 
-- **Tesla T4 (Compute Capability 7.5)**:
+- **NVIDIA A100 40GB (Compute Capability 8.0)** — *primary Colab target (AI Pro plan)*:
+  - 108 SMs, 6912 CUDA cores, 40 MB L2, up to 164 KB shared memory per SM, Peak BW ~1555 GB/s (HBM2).
+  - Compile flag: `-arch=sm_80` (`make push-<component>` defaults to `GPU=A100`).
+- **Tesla T4 (Compute Capability 7.5)** — *legacy / free-tier Colab*:
   - 40 SMs, 2560 CUDA cores, Peak BW ~320 GB/s.
-  - Compile flag: `-arch=sm_75` or `-gencode arch=compute_75,code=sm_75`.
-- **RTX 4090 (Compute Capability 8.9)**:
+  - Compile flag: `-arch=sm_75` (`make push-<component> GPU=T4`).
+- **RTX 4090 (Compute Capability 8.9)** — *Slurm cluster*:
   - 128 SMs, 16384 CUDA cores, Peak BW ~1008 GB/s.
-  - Compile flag: `-arch=sm_89` or `-gencode arch=compute_89,code=sm_89`.
+  - Compile flag: `-arch=sm_89` (`make test-<component> GPU=4090`).
 
 ---
 

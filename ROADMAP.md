@@ -29,7 +29,7 @@ flowchart TD
 - [x] **Midterm Topic**: CUDA indexing basics & memory management (`cuda_structure/`).
 - [x] **Milestone**:
   - [x] Implement basic data allocation (`cudaMalloc`, `cudaMemcpy`, `cudaFree`).
-  - [x] Wire up CPU reference test harness in `tests/test_day1.cu` with synthetic data.
+  - [x] Wire up CPU reference test harness in `tests/test_matmul.cu` (was test_day1.cu) with synthetic data.
   - [x] Implement naive GEMM ($Q \times K^T$) as a baseline to prove end-to-end data transfer works.
 - [x] **Self-Check / Exam Question Check**:
   - [x] *Can you write the 1D and 2D global index equations from memory?*
