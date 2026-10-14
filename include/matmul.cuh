@@ -2,7 +2,12 @@
 
 #include "common.cuh"
 
-// TODO: Implement tiled matrix multiplication: C = alpha * (A @ B_transposed_or_normal) + beta * C
+// Day 1 Baseline: Naive GEMM Kernel
+__global__ void matmul_naive_kernel(const float* A, const float* B, float* C,
+                                    int M, int K, int N,
+                                    bool transpose_B = false);
+
+// Day 2: Tiled Matrix Multiplication
 // Midterm Concepts:
 // - __shared__ float s_A[TILE_SIZE][TILE_SIZE], s_B[TILE_SIZE][TILE_SIZE]
 // - Double __syncthreads() (post-load barrier & post-compute barrier)
