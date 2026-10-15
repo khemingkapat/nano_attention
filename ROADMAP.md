@@ -38,15 +38,15 @@ flowchart TD
 ---
 
 ### Day 2: Thursday, Oct 15 – Tiled Matrix Multiplication (`gpu_memory/`)
-- [ ] **Midterm Topic**: Shared memory tiling, bank conflicts, dual barriers, arithmetic intensity.
-- [ ] **Milestone**:
-  - Implement `matmul_tiled_kernel` in `src/matmul.cu` with `__shared__ float s_A[TILE][TILE]` and `s_B[TILE][TILE]`.
-  - Handle both non-transposed ($S \times V$) and transposed ($Q \times K^T$) layouts.
-  - Enforce boundary zero-padding for non-multiple-of-tile dimensions.
-  - Verify against CPU GEMM.
-- [ ] **Self-Check / Exam Question Check**:
-  - *Why are two `__syncthreads()` mandatory per tile iteration?*
-  - *What is the arithmetic intensity improvement over naive GEMM?*
+- [x] **Midterm Topic**: Shared memory tiling, bank conflicts, dual barriers, arithmetic intensity.
+- [x] **Milestone**:
+  - [x] Implement `matmul_tiled_kernel` in `src/matmul.cu` with `__shared__ float s_A[TILE][TILE]` and `s_B[TILE][TILE]`.
+  - [x] Handle both non-transposed ($S \times V$) and transposed ($Q \times K^T$) layouts.
+  - [x] Enforce boundary zero-padding for non-multiple-of-tile dimensions.
+  - [x] Verify against CPU GEMM.
+- [x] **Self-Check / Exam Question Check**:
+  - [x] *Why are two `__syncthreads()` mandatory per tile iteration?*
+  - [x] *What is the arithmetic intensity improvement over naive GEMM?*
 
 ---
 
