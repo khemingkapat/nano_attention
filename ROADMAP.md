@@ -51,16 +51,16 @@ flowchart TD
 ---
 
 ### Day 3: Friday, Oct 16 – Scaling, 2D Coalescing & Masking (`matrix/`, `cuda_structure/`)
-- [ ] **Midterm Topic**: Global memory coalescing (128B bursts) & warp divergence avoidance.
-- [ ] **Milestone**:
-  - Implement `scale_and_mask_kernel` in `src/mask.cu`.
-  - Scale scores by $1/\sqrt{d_k}$.
-  - Apply causal lower-triangular mask ($j > i \implies -\infty$).
-  - Experiment with thread block shapes: compare `(32, 8)` vs `(8, 32)` to observe coalesced access patterns.
-  - Test branchless masking to eliminate intra-warp divergence.
-- [ ] **Self-Check / Exam Question Check**:
-  - *Why does block `(32, 8)` outperform `(8, 32)` for row-major access?*
-  - *How does intra-warp branching (`tid % 2 == 0`) compare with warp-aligned branching?*
+- [x] **Midterm Topic**: Global memory coalescing (128B bursts) & warp divergence avoidance.
+- [x] **Milestone**:
+  - [x] Implement `scale_and_mask_kernel` in `src/mask.cu`.
+  - [x] Scale scores by $1/\sqrt{d_k}$.
+  - [x] Apply causal lower-triangular mask ($j > i \implies -\infty$).
+  - [x] Experiment with thread block shapes: compare `(32, 8)` vs `(8, 32)` to observe coalesced access patterns.
+  - [x] Test branchless masking to eliminate intra-warp divergence.
+- [x] **Self-Check / Exam Question Check**:
+  - [x] *Why does block `(32, 8)` outperform `(8, 32)` for row-major access?*
+  - [x] *How does intra-warp branching (`tid % 2 == 0`) compare with warp-aligned branching?*
 
 ---
 
