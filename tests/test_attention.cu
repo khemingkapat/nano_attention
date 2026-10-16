@@ -1,61 +1,80 @@
-#include "common.cuh"
 #include "attention.cuh"
-#include <cmath>
-#include <iostream>
-#include <vector>
+#include "test_utils.cuh"
 
-// Reference CPU implementation for Attention(Q, K, V)
-void cpu_attention_ref(const float* Q, const float* K, const float* V, float* Out,
-                       int seq_len, int d_k, bool causal) {
-    float scale = 1.0f / std::sqrt((float)d_k);
-    std::vector<float> scores(seq_len * seq_len);
+bool run_case(const char *name, AttentionConfig cfg) {
+    printf("\n=== %s (B=%d, H=%d, N=%d, D=%d, causal=%s) ===\n",
+           name, cfg.batch_size, cfg.num_heads, cfg.seq_len, cfg.head_dim,
+           cfg.causal ? "true" : "false");
 
-    // 1. Q @ K^T & scale & causal mask
-    for (int i = 0; i < seq_len; ++i) {
-        for (int j = 0; j < seq_len; ++j) {
-            if (causal && j > i) {
-                scores[i * seq_len + j] = -1e9f;
-            } else {
-                float sum = 0.0f;
-                for (int k = 0; k < d_k; ++k) {
-                    sum += Q[i * d_k + k] * K[j * d_k + k];
-                }
-                scores[i * seq_len + j] = sum * scale;
-            }
-        }
+    int total_matrices = cfg.batch_size * cfg.num_heads;
+    size_t q_size = (size_t)total_matrices * cfg.seq_len * cfg.head_dim;
+    size_t workspace_size = (size_t)total_matrices * cfg.seq_len * cfg.seq_len;
+
+    // 1. Host data
+    auto h_Q = random_vector(q_size, 42);
+    auto h_K = random_vector(q_size, 43);
+    auto h_V = random_vector(q_size, 44);
+    std::vector<float> h_ref(q_size);
+    std::vector<float> h_out;
+
+    // 2. CPU Reference (ground truth for all B x H matrices)
+    for (int i = 0; i < total_matrices; ++i) {
+        int offset = i * cfg.seq_len * cfg.head_dim;
+        attention_cpu(h_Q.data() + offset,
+                      h_K.data() + offset,
+                      h_V.data() + offset,
+                      h_ref.data() + offset,
+                      cfg.seq_len, cfg.head_dim, cfg.causal);
     }
 
-    // 2. Softmax along each row
-    for (int i = 0; i < seq_len; ++i) {
-        float max_val = -1e9f;
-        for (int j = 0; j < seq_len; ++j) {
-            if (scores[i * seq_len + j] > max_val) max_val = scores[i * seq_len + j];
-        }
-        float sum_exp = 0.0f;
-        for (int j = 0; j < seq_len; ++j) {
-            scores[i * seq_len + j] = std::exp(scores[i * seq_len + j] - max_val);
-            sum_exp += scores[i * seq_len + j];
-        }
-        for (int j = 0; j < seq_len; ++j) {
-            scores[i * seq_len + j] /= sum_exp;
-        }
-    }
+    // 3. GPU execution
+    DeviceBuffer d_Q(h_Q);
+    DeviceBuffer d_K(h_K);
+    DeviceBuffer d_V(h_V);
+    DeviceBuffer d_workspace(workspace_size);
+    DeviceBuffer d_Out(q_size);
 
-    // 3. Scores @ V
-    for (int i = 0; i < seq_len; ++i) {
-        for (int j = 0; j < d_k; ++j) {
-            float sum = 0.0f;
-            for (int k = 0; k < seq_len; ++k) {
-                sum += scores[i * seq_len + k] * V[k * d_k + j];
-            }
-            Out[i * d_k + j] = sum;
-        }
-    }
+    NanoAttention attn(cfg);
+    GpuTimer t;
+    t.start();
+    attn.forward_sync(d_Q, d_K, d_V, d_Out, d_workspace);
+    t.stop();
+
+    printf("  GPU Time   : %.3f ms\n", t.elapsed_ms());
+
+    // 4. Verify against CPU
+    d_Out.to_host(h_out);
+    printf("  [Check]    ");
+    return verify(h_ref, h_out, 1e-3f);
 }
 
 int main() {
-    std::cout << "=== Correctness Test: NanoAttention ===" << std::endl;
-    // Scaffold test runner
-    std::cout << "[INFO] CPU reference generator ready. Implement kernels to run full diff test!" << std::endl;
-    return 0;
+    printf("=== Correctness Test: NanoAttention (Day 5 Synchronous Pipeline) ===\n");
+
+    bool all_pass = true;
+
+    // Case 1: Baseline power-of-2
+    all_pass &= run_case("Baseline Single-Head",
+                         AttentionConfig{1, 1, 64, 64, true});
+
+    // Case 2: Multi-Batch & Multi-Head
+    all_pass &= run_case("Multi-Batch Multi-Head",
+                         AttentionConfig{2, 4, 64, 32, true});
+
+    // Case 3: Non-power-of-2 (boundary guard check)
+    all_pass &= run_case("Non-Power-of-2 Sequence",
+                         AttentionConfig{1, 2, 47, 32, true});
+
+    // Case 4: Non-causal (bidirectional)
+    all_pass &= run_case("Non-Causal Attention",
+                         AttentionConfig{1, 1, 64, 64, false});
+
+    printf("\n=======================================================\n");
+    if (all_pass) {
+        printf("🎉 ALL ATTENTION TESTS PASSED!\n");
+        return 0;
+    } else {
+        printf("❌ SOME ATTENTION TESTS FAILED!\n");
+        return 1;
+    }
 }

@@ -79,14 +79,14 @@ flowchart TD
 ---
 
 ### Day 5: Sunday, Oct 18 – End-to-End Synchronous Attention
-- [ ] **Midterm Topic**: Composing kernels, device synchronization, memory workspace management.
-- [ ] **Milestone**:
-  - Assemble the full pipeline in `src/attention.cu`:
+- [x] **Midterm Topic**: Composing kernels, device synchronization, memory workspace management.
+- [x] **Milestone**:
+  - [x] Assemble the full pipeline in `src/attention.cu`:
     $$\text{Q} \xrightarrow{\text{Tiled GEMM}} QK^T \xrightarrow{\text{Scale+Mask}} S \xrightarrow{\text{Softmax}} P \xrightarrow{\text{Tiled GEMM}} PV = \text{Out}$$
-  - Run full test suite across varied batch sizes ($B=1, 2, 4$) and sequence lengths ($N=32, 64, 128$).
-  - Ensure zero memory leaks with `cudaMemGetInfo` or `cudaDeviceReset`.
-- [ ] **Self-Check / Exam Question Check**:
-  - *Can you trace the memory footprint of temporary activation buffers?*
+  - [x] Run full test suite across varied batch sizes ($B=1, 2, 4$) and sequence lengths ($N=32, 64, 128$).
+  - [x] Ensure zero memory leaks with `cudaMemGetInfo` or `cudaDeviceReset`.
+- [x] **Self-Check / Exam Question Check**:
+  - [x] *Can you trace the memory footprint of temporary activation buffers?*
 
 ---
 
