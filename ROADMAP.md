@@ -65,16 +65,16 @@ flowchart TD
 ---
 
 ### Day 4: Saturday, Oct 17 – Row-Wise Softmax with Tree Reduction (`reduction/`)
-- [ ] **Midterm Topic**: Tree reduction, sequential addressing, thread coarsening, numerical precision.
-- [ ] **Milestone**:
-  - Implement `softmax_forward_kernel` in `src/softmax.cu`.
-  - Step 1: Find row maximum $m = \max_j(x_{ij})$ via sequential tree reduction (`tid < s`).
-  - Step 2: Compute $\sum_j \exp(x_{ij} - m)$ via tree reduction.
-  - Step 3: Normalize elements: $\exp(x_{ij} - m) / \sum$.
-  - Verify floating-point stability (no NaN/inf) against CPU reference.
-- [ ] **Self-Check / Exam Question Check**:
-  - *Why does sequential addressing eliminate warp divergence until `s < 32`?*
-  - *Why subtract the row maximum before computing `exp()`?*
+- [x] **Midterm Topic**: Tree reduction, sequential addressing, thread coarsening, numerical precision.
+- [x] **Milestone**:
+  - [x] Implement `softmax_forward_kernel` in `src/softmax.cu`.
+  - [x] Step 1: Find row maximum $m = \max_j(x_{ij})$ via sequential tree reduction (`tid < s`).
+  - [x] Step 2: Compute $\sum_j \exp(x_{ij} - m)$ via tree reduction.
+  - [x] Step 3: Normalize elements: $\exp(x_{ij} - m) / \sum$.
+  - [x] Verify floating-point stability (no NaN/inf) against CPU reference.
+- [x] **Self-Check / Exam Question Check**:
+  - [x] *Why does sequential addressing eliminate warp divergence until `s < 32`?*
+  - [x] *Why subtract the row maximum before computing `exp()`?*
 
 ---
 
