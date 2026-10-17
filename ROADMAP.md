@@ -91,16 +91,16 @@ flowchart TD
 ---
 
 ### Day 6: Monday, Oct 19 – Streams, Pinned Memory & Pipelining (`stream/`)
-- [ ] **Midterm Topic**: Asynchronous transfers, pinned memory (`cudaMallocHost`), multi-stream concurrency, event timing.
-- [ ] **Milestone**:
-  - Implement `forward_streamed` in `src/attention.cu`.
-  - Allocate pinned host memory for $Q, K, V, \text{Out}$.
-  - Create multiple CUDA streams (`cudaStreamCreate`) to process heads or batches concurrently.
-  - Pipeline chunks: Overlap `H2D(chunk i+1)` with `Compute(chunk i)` and `D2H(chunk i-1)`.
-  - Use `cudaEventRecord` and `cudaStreamWaitEvent` for timing and dependencies.
-- [ ] **Self-Check / Exam Question Check**:
-  - *Why does `cudaMemcpyAsync` require pinned (page-locked) memory?*
-  - *How do CUDA events measure elapsed time without CPU synchronization stalls?*
+- [x] **Midterm Topic**: Asynchronous transfers, pinned memory (`cudaMallocHost`), multi-stream concurrency, event timing.
+- [x] **Milestone**:
+  - [x] Implement `forward_streamed` in `src/attention.cu`.
+  - [x] Allocate pinned host memory for $Q, K, V, \text{Out}$.
+  - [x] Create multiple CUDA streams (`cudaStreamCreate`) to process heads or batches concurrently.
+  - [x] Pipeline chunks: Overlap `H2D(chunk i+1)` with `Compute(chunk i)` and `D2H(chunk i-1)`.
+  - [x] Use `cudaEventRecord` and `cudaStreamWaitEvent` for timing and dependencies.
+- [x] **Self-Check / Exam Question Check**:
+  - [x] *Why does `cudaMemcpyAsync` require pinned (page-locked) memory?*
+  - [x] *How do CUDA events measure elapsed time without CPU synchronization stalls?*
 
 ---
 

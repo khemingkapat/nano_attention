@@ -41,6 +41,38 @@ struct DeviceBuffer {
     operator float *() const { return ptr; } // pass DeviceBuffer straight to launch_*()
 };
 
+// ── Pinned host memory RAII ─────────────────────────────────────────────────
+template <typename T = float>
+struct PinnedBuffer {
+    T *ptr = nullptr;
+    size_t count = 0;
+
+    explicit PinnedBuffer(size_t n) : count(n) {
+        CHECK_CUDA(cudaMallocHost(&ptr, n * sizeof(T)));
+    }
+    ~PinnedBuffer() {
+        if (ptr) cudaFreeHost(ptr);
+    }
+
+    PinnedBuffer(const PinnedBuffer &) = delete;
+    PinnedBuffer &operator=(const PinnedBuffer &) = delete;
+
+    void fill_random(unsigned seed = 42) {
+        srand(seed);
+        for (size_t i = 0; i < count; ++i) {
+            ptr[i] = (rand() / (float)RAND_MAX) * 2.0f - 1.0f;
+        }
+    }
+
+    T *data() { return ptr; }
+    const T *data() const { return ptr; }
+    size_t size() const { return count; }
+    T &operator[](size_t i) { return ptr[i]; }
+    const T &operator[](size_t i) const { return ptr[i]; }
+    operator T *() { return ptr; }
+    operator const T *() const { return ptr; }
+};
+
 // ── Data generation ─────────────────────────────────────────────────────────
 inline std::vector<float> random_vector(size_t n, unsigned seed = 42) {
     std::vector<float> v(n);
