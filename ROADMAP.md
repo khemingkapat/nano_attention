@@ -105,14 +105,14 @@ flowchart TD
 ---
 
 ### Day 7: Tuesday, Oct 20 – Benchmarking & Midterm Readiness Wrap-Up
-- [ ] **Midterm Topic**: Hardware performance profiling (T4 sm_75 vs RTX 4090 sm_89), theoretical vs effective bandwidth.
-- [ ] **Milestone**:
-  - Run benchmark harness in `benchmarks/bench_attention.cu`.
-  - Measure kernel latency (ms) with `GpuTimer` and calculate effective bandwidth (GB/s).
-  - Deploy to Google Colab T4 via `colab-submit` and record metrics.
-  - Deploy to KMUTT Slurm cluster (RTX 4090) via `slurm-scp` / `sbatch` and record metrics.
-  - Verify stream speedup vs synchronous baseline.
-- [ ] **Outcome**: Clean, documented repository ready as your ultimate midterm reference!
+- [x] **Midterm Topic**: Hardware performance profiling (A100 sm_80, theoretical vs effective bandwidth, roofline model).
+- [x] **Milestone**:
+  - [x] Run benchmark harness in `benchmarks/bench_attention.cu`.
+  - [x] Measure kernel latency (ms) with `GpuTimer` and calculate effective bandwidth (GB/s).
+  - [x] Query device hardware properties (`cudaDeviceGetAttribute`) and compute theoretical peak bandwidth.
+  - [x] Calculate arithmetic intensity and analyze memory-bound behavior against roofline ridge point.
+  - [x] Verify stream speedup vs synchronous baseline and analyze SM saturation effects.
+- [x] **Outcome**: Clean, documented repository ready as your ultimate midterm reference!
 
 ---
 

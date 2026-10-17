@@ -68,6 +68,13 @@ test-%: $(BIN_DIR)/test_%
 # ── Single-file bundles for Colab ───────────────────────────────────────────
 #   make bundle-matmul  -> build/test_matmul.cu (self-contained)
 #   make push-matmul    -> bundle + colab-push to /content/test_matmul.cu
+bundle-bench: FORCE
+	python3 scripts/bundle.py benchmarks/bench_attention.cu build/bench_attention.cu
+
+push-bench: bundle-bench
+	colab-push build/bench_attention.cu
+	@echo "On VM ($(GPU)):  nvcc bench_attention.cu -o bench -arch=sm_$(ARCH) -std=c++17 && ./bench"
+
 bundle-%: FORCE
 	python3 scripts/bundle.py tests/test_$*.cu build/test_$*.cu
 
